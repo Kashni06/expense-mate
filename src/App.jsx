@@ -2,8 +2,9 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
-import Auth from "./pages/Auth";
+
 import Home from "./pages/Home";
+import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Groups from "./pages/Groups";
 import Friends from "./pages/Friends";
@@ -12,17 +13,19 @@ function Layout() {
   const location = useLocation();
 
   const isHome = location.pathname === "/";
-  const hideFooter = location.pathname === "/friends";
+  const isAuth = location.pathname === "/auth";
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
 
-      {/* MAIN CONTENT */}
       <div className="flex flex-1">
-        {!isHome && <Sidebar />}
+        {/* Sidebar only on protected pages */}
+        {!isHome && !isAuth && <Sidebar />}
 
-        <div className={`flex-1 ${isHome ? "" : "bg-gray-50 p-6"}`}>
+        <main
+          className={`flex-1 ${!isHome && !isAuth ? "bg-gray-50 p-6" : ""}`}
+        >
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
@@ -30,11 +33,11 @@ function Layout() {
             <Route path="/groups" element={<Groups />} />
             <Route path="/friends" element={<Friends />} />
           </Routes>
-        </div>
+        </main>
       </div>
 
-      {/* FOOTER */}
-      {!hideFooter && <Footer />}
+      {/* Footer only on Home */}
+      {isHome && <Footer />}
     </div>
   );
 }
